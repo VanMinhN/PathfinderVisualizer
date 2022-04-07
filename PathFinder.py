@@ -200,8 +200,9 @@ def main(win, width):
                         for node in row:
                             node.update_neighbors(grid)
 
-                    algorithm(lambda: draw(win, grid, ROWS, width),
-                              grid, start, end)
+                    # algorithm(lambda: draw(win, grid, ROWS, width),
+                    #           grid, start, end)
+                    BFS(lambda: draw(win, grid, ROWS, width),grid, start, end, h(start.get_pos(), end.get_pos()))
                 # Reset
                 if event.key == pygame.K_c:
                     start = None
@@ -215,6 +216,8 @@ def main(win, width):
 #
 
 # Algorithm: A*
+
+
 def algorithm(draw, grid, start, end):
     count = 0
     open_set = PriorityQueue()
@@ -265,20 +268,70 @@ def algorithm(draw, grid, start, end):
 
     return False
 
-#Algorithm: BFS
+# Algorithm: BFS
+# THis is unweighted graph
 
-def BFS(draw, grid, start, end):
-   pass 
+def BFS(draw, grid, start, end, pos):
+    count = 0
+    open_set = PriorityQueue()
+    open_set.put((0, count, start))
+    came_from = {}
+    g_score = {node: float("inf") for row in grid for node in row}
+    g_score[start] = 0
+    # keep track of the distance between current node to end node
+    f_score = {node: float("inf") for row in grid for node in row}
+    # heuristic -> guess from start to end node
+    f_score[start] = pos
 
-#Algorithm DFS
+    open_set_hash = {start}
+
+    while not open_set.empty():
+        # Safety measurement -> in case something when wrong eg. take too long, or can't find end node
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+        current = open_set.get()[2]  # Index at 2 to get node based on line 10
+        open_set_hash.remove(current)  # remove dup
+
+        if current == end:
+            reconstruct_path(came_from, end, draw)
+            end.make_end()
+            start.make_start()
+            return True
+
+        for neighbor in current.neighbors:
+            temp_g_score = g_score[current] + 1
+
+            if temp_g_score < g_score[neighbor]:
+                came_from[neighbor] = current
+                g_score[neighbor] = temp_g_score
+                f_score[neighbor] = temp_g_score + \
+                    pos
+                if neighbor not in open_set_hash:
+                    count += 1
+                    open_set.put((f_score[neighbor], count, neighbor))
+                    open_set_hash.add(neighbor)
+                    neighbor.make_open()
+
+        draw()
+
+        if current != start:
+            current.make_closed()
+
+    return False
+
+# Algorithm DFS
+
 
 def DFS(draw, grid, start, end):
-   pass
+    pass
 
-#Algorithm: dijkstra's algorithm
+# Algorithm: dijkstra's algorithm
+
 
 def Dijkstra(draw, grid, start, end):
-   pass
+    pass
 
 
 # -------------------------------------------------------------------------
