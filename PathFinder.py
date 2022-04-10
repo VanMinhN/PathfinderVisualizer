@@ -1,5 +1,6 @@
 import pygame
 import math
+import Button
 from queue import PriorityQueue
 
 WIDTH = 800
@@ -202,7 +203,8 @@ def main(win, width):
 
                     # algorithm(lambda: draw(win, grid, ROWS, width),
                     #           grid, start, end)
-                    BFS(lambda: draw(win, grid, ROWS, width),grid, start, end, h(start.get_pos(), end.get_pos()))
+                    BFS(lambda: draw(win, grid, ROWS, width), grid,
+                        start, end, h(start.get_pos(), end.get_pos()))
                 # Reset
                 if event.key == pygame.K_c:
                     start = None
@@ -271,6 +273,7 @@ def algorithm(draw, grid, start, end):
 # Algorithm: BFS
 # THis is unweighted graph
 
+
 def BFS(draw, grid, start, end, pos):
     count = 0
     open_set = PriorityQueue()
@@ -336,4 +339,18 @@ def Dijkstra(draw, grid, start, end):
 
 # -------------------------------------------------------------------------
 
-main(WIN, WIDTH)
+def MainMenu(win, width):
+    run = True
+    BFSbtn = Button.BTN(width/2 - 100, width/2, BFSbtnimg, 0.2)
+    while run:
+        win.fill(WHITE)
+        if(BFSbtn.draw(win)):
+            main(win, width)
+        for event in pygame.event.get():  # event game handler
+            if event.type == pygame.QUIT:  # quit game
+                run = False
+
+
+BFSbtnimg = pygame.image.load("").convert_alpha()
+
+MainMenu(WIN, WIDTH)
