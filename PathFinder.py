@@ -1,6 +1,7 @@
 import pygame
 import math
 import Button
+from tkinter import messagebox, Tk
 from queue import PriorityQueue
 
 WIDTH = 800
@@ -282,13 +283,14 @@ def Dijkstra(draw, grid, start, end):
 # Main Loop
 
 
-def main(win, width):
+def main(win, width, option):
     ROWS = 50
     grid = make_grid(ROWS, width)
 
     start = None
     end = None
     testing = False
+    test2 = True
     run = True
     # game loop
     while run:
@@ -334,10 +336,12 @@ def main(win, width):
                         for node in row:
                             node.update_neighbors(grid)
 
-                    # algorithm(lambda: draw(win, grid, ROWS, width),
-                    #           grid, start, end)
-                    BFS(lambda: draw(win, grid, ROWS, width), grid,
-                        start, end, h(start.get_pos(), end.get_pos()))
+                    if option == 1:
+                        test2 = BFS(lambda: draw(win, grid, ROWS, width), grid,
+                                    start, end, h(start.get_pos(), end.get_pos()))
+                    elif option == 2:
+                        test2 = algorithm(lambda: draw(win, grid, ROWS, width),
+                                          grid, start, end)
                     testing = True  # flag to reset
                 # Reset
                 if event.key == pygame.K_c:
@@ -347,6 +351,14 @@ def main(win, width):
                 # go back to Menu
                 if event.key == pygame.K_ESCAPE:
                     run = False
+            # Reset the algo if there is no solution found
+            if not test2:
+                start = None
+                end = None
+                grid = make_grid(ROWS, width)
+                Tk().wm_withdraw()
+                messagebox.showinfo("No Solution", "There was no solution")
+                test2 = True
     pygame.quit()
 
 
@@ -359,11 +371,11 @@ def MainMenu(win):
     while run:
         win.fill((255, 255, 255))  # fill the screen with White
         if(BFS_BTN.draw(win)):
-            main(win, WIDTH)
+            main(win, WIDTH, 1)
         if(Astar_BTN.draw(win)):
-            main(win, WIDTH)
+            main(win, WIDTH, 2)
         if(Control_BTN.draw(win)):
-            main(win, WIDTH)
+            main(win, WIDTH, 1)
         if(EXIT_BTN.draw(win)):
             run = False
         pygame.display.update()
