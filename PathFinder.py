@@ -4,8 +4,9 @@ import Button
 from queue import PriorityQueue
 
 WIDTH = 800
-WIN = pygame.display.set_mode((WIDTH, WIDTH))
-pygame.display.set_caption("Path Finding Visualizer")
+pygame.font.init()
+pygame.init()  # Initiate pygame
+pygame.mixer.pre_init(44100, -16, 2, 512)
 
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
@@ -152,67 +153,6 @@ def get_clicked_pos(pos, rows, width):
 
     return row, col
 
-# Main Loop
-
-
-def main(win, width):
-    ROWS = 50
-    grid = make_grid(ROWS, width)
-
-    start = None
-    end = None
-
-    run = True
-    # game loop
-    while run:
-        draw(win, grid, ROWS, width)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-
-            if pygame.mouse.get_pressed()[0]:  # LEFT MOUSE
-                pos = pygame.mouse.get_pos()
-                row, col = get_clicked_pos(pos, ROWS, width)
-                node = grid[row][col]
-                if not start and node != end:
-                    start = node
-                    start.make_start()
-
-                elif not end and node != start:
-                    end = node
-                    end.make_end()
-
-                elif node != end and node != start:
-                    node.make_barrier()
-
-            elif pygame.mouse.get_pressed()[2]:  # RIGHT MOUSE
-                pos = pygame.mouse.get_pos()
-                row, col = get_clicked_pos(pos, ROWS, width)
-                node = grid[row][col]
-                node.reset()
-                if node == start:
-                    start = None
-                elif node == end:
-                    end = None
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE and start and end:
-                    for row in grid:
-                        for node in row:
-                            node.update_neighbors(grid)
-
-                    # algorithm(lambda: draw(win, grid, ROWS, width),
-                    #           grid, start, end)
-                    BFS(lambda: draw(win, grid, ROWS, width), grid,
-                        start, end, h(start.get_pos(), end.get_pos()))
-                # Reset
-                if event.key == pygame.K_c:
-                    start = None
-                    end = None
-                    grid = make_grid(ROWS, width)
-
-    pygame.quit()
-
 #
 #   THE SECTION BELOW IS FOR PATH FINDING ALGO
 #
@@ -339,18 +279,110 @@ def Dijkstra(draw, grid, start, end):
 
 # -------------------------------------------------------------------------
 
-def MainMenu(win, width):
+# Main Loop
+
+
+def main(win, width):
+    ROWS = 50
+    grid = make_grid(ROWS, width)
+
+    start = None
+    end = None
+    testing = False
     run = True
-    BFSbtn = Button.BTN(width/2 - 100, width/2, BFSbtnimg, 0.2)
+    # game loop
     while run:
-        win.fill(WHITE)
-        if(BFSbtn.draw(win)):
-            main(win, width)
+        draw(win, grid, ROWS, width)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+
+            if pygame.mouse.get_pressed()[0]:  # LEFT MOUSE
+                pos = pygame.mouse.get_pos()
+                row, col = get_clicked_pos(pos, ROWS, width)
+                node = grid[row][col]
+                if not start and node != end:
+                    start = node
+                    start.make_start()
+
+                elif not end and node != start:
+                    end = node
+                    end.make_end()
+
+                elif node != end and node != start:
+                    node.make_barrier()
+
+            elif pygame.mouse.get_pressed()[2]:  # RIGHT MOUSE
+                pos = pygame.mouse.get_pos()
+                row, col = get_clicked_pos(pos, ROWS, width)
+                node = grid[row][col]
+                node.reset()
+                if node == start:
+                    start = None
+                elif node == end:
+                    end = None
+            # Checking if the Algo is already run and find the path
+            # Will reset if the user pressed any button
+            if event.type == pygame.MOUSEBUTTONDOWN and testing:
+                start = None
+                end = None
+                grid = make_grid(ROWS, width)
+                testing = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE and start and end:
+                    for row in grid:
+                        for node in row:
+                            node.update_neighbors(grid)
+
+                    # algorithm(lambda: draw(win, grid, ROWS, width),
+                    #           grid, start, end)
+                    BFS(lambda: draw(win, grid, ROWS, width), grid,
+                        start, end, h(start.get_pos(), end.get_pos()))
+                    testing = True  # flag to reset
+                # Reset
+                if event.key == pygame.K_c:
+                    start = None
+                    end = None
+                    grid = make_grid(ROWS, width)
+                # go back to Menu
+                if event.key == pygame.K_ESCAPE:
+                    run = False
+    pygame.quit()
+
+
+def MainMenu(win):
+    run = True
+    BFS_BTN = Button.BTN(WIDTH/2-50, WIDTH/2, BFSbtn_img, 1)
+    Astar_BTN = Button.BTN(WIDTH/2-50, WIDTH/2+100, Astarbtn_img, 1)
+    Control_BTN = Button.BTN(WIDTH/2-50, WIDTH/2+200, Controlbtn_img, 1)
+    EXIT_BTN = Button.BTN(WIDTH/2-50, WIDTH/2+300, Exitbtn_img, 1)
+    while run:
+        win.fill((255, 255, 255))  # fill the screen with White
+        if(BFS_BTN.draw(win)):
+            main(win, WIDTH)
+        if(Astar_BTN.draw(win)):
+            main(win, WIDTH)
+        if(Control_BTN.draw(win)):
+            main(win, WIDTH)
+        if(EXIT_BTN.draw(win)):
+            run = False
+        pygame.display.update()
         for event in pygame.event.get():  # event game handler
             if event.type == pygame.QUIT:  # quit game
                 run = False
+    pygame.display.quit()  # quit the window
 
 
-BFSbtnimg = pygame.image.load("").convert_alpha()
+WIN = pygame.display.set_mode((WIDTH, WIDTH))
+pygame.display.set_caption("Path Finding Visualizer")
 
-MainMenu(WIN, WIDTH)
+# Load BFS button option
+BFSbtn_img = pygame.image.load("./img/BFS_img.png").convert_alpha()
+# Load A* button option
+Astarbtn_img = pygame.image.load("./img/Astar_img.png").convert_alpha()
+# Load Control button option
+Controlbtn_img = pygame.image.load("./img/Control.png").convert_alpha()
+# Load Control button option
+Exitbtn_img = pygame.image.load("./img/Exit_img.png").convert_alpha()
+
+MainMenu(WIN)
