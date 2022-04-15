@@ -20,6 +20,8 @@ ORANGE = (255, 165, 0)
 GREY = (128, 128, 128)
 TURQUOISE = (64, 224, 208)
 
+quit_game = True
+
 # Node on the grid
 
 
@@ -143,6 +145,19 @@ def draw(win, grid, rows, width):
 
     draw_grid(win, rows, width)
     pygame.display.update()
+
+
+def draw_text_middle(surface, text, size, color, pos):
+    font = pygame.font.SysFont("calibri", size, bold=True)
+    label = font.render(text, 1, color)
+
+    surface.blit(
+        label,
+        (
+            WIDTH / 2 - (label.get_width() / 2),
+            WIDTH / 2 - (label.get_height() / 2) + pos,
+        ),
+    )
 
 
 def get_clicked_pos(pos, rows, width):
@@ -284,6 +299,7 @@ def Dijkstra(draw, grid, start, end):
 
 
 def main(win, width, option):
+    global quit_game
     ROWS = 50
     grid = make_grid(ROWS, width)
 
@@ -298,6 +314,7 @@ def main(win, width, option):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+                quit_game = False
 
             if pygame.mouse.get_pressed()[0]:  # LEFT MOUSE
                 pos = pygame.mouse.get_pos()
@@ -349,7 +366,7 @@ def main(win, width, option):
                     end = None
                     grid = make_grid(ROWS, width)
                 # go back to Menu
-                if event.key == pygame.K_ESCAPE:
+                if event.key == pygame.K_x:
                     run = False
             # Reset the algo if there is no solution found
             if not test2:
@@ -359,29 +376,66 @@ def main(win, width, option):
                 Tk().wm_withdraw()
                 messagebox.showinfo("No Solution", "There was no solution")
                 test2 = True
-    pygame.quit()
+
+
+def ControlMenu(win):
+    global quit_game
+    run = True
+    BackToMenu_BTN = Button.BTN(WIDTH/2-380, WIDTH/2-350, BackBTN_img, 1)
+    while run:
+        win.fill(WHITE)
+        # Draw out the button that need to be pressed
+        # First line -> Left click to create start point and right click to undo and create start node again
+        # Second line -> Left click to create end point and right click to undo and create end node again
+        # Third line -> Left click to create wall point and right click to undo and create wall node again
+        # Fourth line -> Space to run the algorithm
+        # Fifth line -> Press C for reset
+        # In order to remove the node, right click the node
+        draw_text_middle(
+            win, "Start node / End node / Wall node: Left click on any empty grid to create a node.", 20, BLACK, -200)
+        draw_text_middle(
+            win, "In order to remove the node, right click the node.", 20, BLACK, -150)
+        draw_text_middle(
+            win, "It will always create Start node first when u left click then end node then wall node.", 20, BLACK, -100)
+        draw_text_middle(
+            win, "Run algorithm: After you create all the node. Press Space bar to run the algorithm", 20, BLACK, -50)
+        draw_text_middle(
+            win, "RESET: you can press C button to reset or left click/right click (after the algo is finish).", 20, BLACK, 0)
+        draw_text_middle(
+            win, "Back to Menu: You can press X key.", 20, BLACK, 50)
+        if(BackToMenu_BTN.draw(win)):
+            run = False
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+                quit_game = False
 
 
 def MainMenu(win):
+    global quit_game
     run = True
-    BFS_BTN = Button.BTN(WIDTH/2-50, WIDTH/2, BFSbtn_img, 1)
+    Bfs_BTN = Button.BTN(WIDTH/2-50, WIDTH/2, BFSbtn_img, 1)
     Astar_BTN = Button.BTN(WIDTH/2-50, WIDTH/2+100, Astarbtn_img, 1)
     Control_BTN = Button.BTN(WIDTH/2-50, WIDTH/2+200, Controlbtn_img, 1)
-    EXIT_BTN = Button.BTN(WIDTH/2-50, WIDTH/2+300, Exitbtn_img, 1)
+    Exit_BTN = Button.BTN(WIDTH/2-50, WIDTH/2+300, Exitbtn_img, 1)
     while run:
-        win.fill((255, 255, 255))  # fill the screen with White
-        if(BFS_BTN.draw(win)):
-            main(win, WIDTH, 1)
-        if(Astar_BTN.draw(win)):
-            main(win, WIDTH, 2)
-        if(Control_BTN.draw(win)):
-            main(win, WIDTH, 1)
-        if(EXIT_BTN.draw(win)):
+        if not quit_game:
             run = False
-        pygame.display.update()
-        for event in pygame.event.get():  # event game handler
-            if event.type == pygame.QUIT:  # quit game
+        else:
+            win.fill(WHITE)  # fill the screen with White
+            if(Bfs_BTN.draw(win)):
+                main(win, WIDTH, 1)
+            elif(Astar_BTN.draw(win)):
+                main(win, WIDTH, 2)
+            elif(Control_BTN.draw(win)):
+                ControlMenu(win)
+            elif(Exit_BTN.draw(win)):
                 run = False
+            pygame.display.update()
+            for event in pygame.event.get():  # event game handler
+                if event.type == pygame.QUIT:  # quit game
+                    run = False
     pygame.display.quit()  # quit the window
 
 
@@ -394,7 +448,9 @@ BFSbtn_img = pygame.image.load("./img/BFS_img.png").convert_alpha()
 Astarbtn_img = pygame.image.load("./img/Astar_img.png").convert_alpha()
 # Load Control button option
 Controlbtn_img = pygame.image.load("./img/Control.png").convert_alpha()
-# Load Control button option
+# Load Exit button option
 Exitbtn_img = pygame.image.load("./img/Exit_img.png").convert_alpha()
+# Load Back To Menu button option
+BackBTN_img = pygame.image.load("./img/BackToMenu_btn.png").convert_alpha()
 
 MainMenu(WIN)
