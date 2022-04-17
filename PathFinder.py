@@ -226,11 +226,10 @@ def algorithm(draw, grid, start, end):
 
     return False
 
-# Algorithm: BFS
-# THis is unweighted graph
+# Algorithm: dijkstra's algorithm
 
 
-def BFS(draw, grid, start, end, pos):
+def Dijkstra(draw, grid, start, end, pos):
     count = 0
     open_set = PriorityQueue()
     open_set.put((0, count, start))
@@ -279,19 +278,6 @@ def BFS(draw, grid, start, end, pos):
             current.make_closed()
 
     return False
-
-# Algorithm DFS
-
-
-def DFS(draw, grid, start, end):
-    pass
-
-# Algorithm: dijkstra's algorithm
-
-
-def Dijkstra(draw, grid, start, end):
-    pass
-
 
 # -------------------------------------------------------------------------
 
@@ -354,8 +340,8 @@ def main(win, width, option):
                             node.update_neighbors(grid)
 
                     if option == 1:
-                        test2 = BFS(lambda: draw(win, grid, ROWS, width), grid,
-                                    start, end, h(start.get_pos(), end.get_pos()))
+                        test2 = Dijkstra(lambda: draw(win, grid, ROWS, width), grid,
+                                         start, end, h(start.get_pos(), end.get_pos()))
                     elif option == 2:
                         test2 = algorithm(lambda: draw(win, grid, ROWS, width),
                                           grid, start, end)
@@ -415,7 +401,7 @@ def ControlMenu(win):
 def MainMenu(win):
     global quit_game
     run = True
-    Bfs_BTN = Button.BTN(WIDTH/2-50, WIDTH/2, BFSbtn_img, 1)
+    Dijkstra_BTN = Button.BTN(WIDTH/2-50, WIDTH/2, Dijkstra_img, 1.1)
     Astar_BTN = Button.BTN(WIDTH/2-50, WIDTH/2+100, Astarbtn_img, 1)
     Control_BTN = Button.BTN(WIDTH/2-50, WIDTH/2+200, Controlbtn_img, 1)
     Exit_BTN = Button.BTN(WIDTH/2-50, WIDTH/2+300, Exitbtn_img, 1)
@@ -424,7 +410,7 @@ def MainMenu(win):
             run = False
         else:
             win.fill(WHITE)  # fill the screen with White
-            if(Bfs_BTN.draw(win)):
+            if(Dijkstra_BTN.draw(win)):
                 main(win, WIDTH, 1)
             elif(Astar_BTN.draw(win)):
                 main(win, WIDTH, 2)
@@ -442,8 +428,8 @@ def MainMenu(win):
 WIN = pygame.display.set_mode((WIDTH, WIDTH))
 pygame.display.set_caption("Path Finding Visualizer")
 
-# Load BFS button option
-BFSbtn_img = pygame.image.load("./img/BFS_img.png").convert_alpha()
+# Load Dijkstra button option
+Dijkstra_img = pygame.image.load("./img/Dijkstra_img.png").convert_alpha()
 # Load A* button option
 Astarbtn_img = pygame.image.load("./img/Astar_img.png").convert_alpha()
 # Load Control button option
