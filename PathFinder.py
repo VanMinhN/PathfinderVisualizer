@@ -401,15 +401,17 @@ def ControlMenu(win):
 def MainMenu(win):
     global quit_game
     run = True
-    Dijkstra_BTN = Button.BTN(WIDTH/2-50, WIDTH/2, Dijkstra_img, 1.1)
-    Astar_BTN = Button.BTN(WIDTH/2-50, WIDTH/2+100, Astarbtn_img, 1)
-    Control_BTN = Button.BTN(WIDTH/2-50, WIDTH/2+200, Controlbtn_img, 1)
-    Exit_BTN = Button.BTN(WIDTH/2-50, WIDTH/2+300, Exitbtn_img, 1)
+    Dijkstra_BTN = Button.BTN(WIDTH/2-70, WIDTH/2, Dijkstra_img, 1.1)
+    Astar_BTN = Button.BTN(WIDTH/2-70, WIDTH/2+100, Astarbtn_img, 1)
+    Control_BTN = Button.BTN(WIDTH/2-70, WIDTH/2+200, Controlbtn_img, 1)
+    Exit_BTN = Button.BTN(WIDTH/2-70, WIDTH/2+300, Exitbtn_img, 1)
     while run:
         if not quit_game:
             run = False
         else:
             win.fill(WHITE)  # fill the screen with White
+            draw_text_middle(
+                win, "Pathfinding Visualizer", 50, RED, -200)
             if(Dijkstra_BTN.draw(win)):
                 main(win, WIDTH, 1)
             elif(Astar_BTN.draw(win)):
