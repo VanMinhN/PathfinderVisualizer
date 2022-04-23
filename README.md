@@ -7,12 +7,12 @@ Welcome to Pathfinder Visualizer. I build this application because I am interest
 Algorithms
 -----
 Dijkstra's algorithm: the grandfather of pathfinding algorithm. This pathfinding algorithm will guarantee the shortest path.
-<br>
+<br><br>
 A Search*: the best pathfinding algorithm; uses heuristics to guarantee the shortest path and faster than Dijkstra's algorithm.
 
 Installation
 -----------------------------------
-Need the latest pip and py version.
+Need the latest pip and pygame version.
 
 To run the application
 ----------------------
