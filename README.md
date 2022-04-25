@@ -16,7 +16,9 @@ Need the latest pip and pygame version.
 
 To run the application
 ----------------------
-
+Clone the repos:
+and run the application in the build folder
 
 Demo (Youtube Link)
 -------------------
+N/A
